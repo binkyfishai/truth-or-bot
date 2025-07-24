@@ -15,7 +15,7 @@ export const GameHeader = ({ timeLeft, totalTime, score, round, totalRounds }: G
   const isUrgent = timeLeft <= 5;
 
   return (
-    <div className="bg-gradient-card shadow-card rounded-lg p-4 border border-border">
+    <div className="bg-card/70 backdrop-blur-md shadow-card rounded-lg p-4 border border-border">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-4">
           <Badge variant="secondary" className="flex items-center gap-2">
