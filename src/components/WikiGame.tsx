@@ -183,7 +183,7 @@ export const WikiGame = () => {
           <div className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-black/60 border border-green-500/30 p-4">
-                <div className="text-2xl font-bold text-green-400">{gameStats.score:04d}</div>
+                <div className="text-2xl font-bold text-green-400">{gameStats.score.toString().padStart(4, '0')}</div>
                 <div className="text-xs text-green-200 uppercase tracking-wide">TOTAL_SCORE</div>
               </div>
               <div className="bg-black/60 border border-green-500/30 p-4">
@@ -194,11 +194,11 @@ export const WikiGame = () => {
             
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-black/60 border border-purple-500/30 p-4">
-                <div className="text-lg font-semibold text-purple-400">{gameStats.correctAnswers:02d}/{config!.rounds:02d}</div>
+                <div className="text-lg font-semibold text-purple-400">{gameStats.correctAnswers.toString().padStart(2, '0')}/{config!.rounds.toString().padStart(2, '0')}</div>
                 <div className="text-xs text-purple-200 uppercase tracking-wide">THREATS_DETECTED</div>
               </div>
               <div className="bg-black/60 border border-cyan-500/30 p-4">
-                <div className="text-lg font-semibold text-cyan-400">{Math.round(gameStats.averageTime):02d}s</div>
+                <div className="text-lg font-semibold text-cyan-400">{Math.round(gameStats.averageTime).toString().padStart(2, '0')}s</div>
                 <div className="text-xs text-cyan-200 uppercase tracking-wide">AVG_RESPONSE_TIME</div>
               </div>
             </div>

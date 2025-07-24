@@ -24,18 +24,18 @@ export const GameHeader = ({ timeLeft, totalTime, score, round, totalRounds }: G
           </div>
           <Badge variant="outline" className="border-green-500/50 text-green-300 bg-black/50 font-mono">
             <Target className="w-3 h-3 mr-1" />
-            ROUND_{round:02d}/{totalRounds:02d}
+ROUND_{round.toString().padStart(2, '0')}/{totalRounds.toString().padStart(2, '0')}
           </Badge>
           <Badge variant="outline" className="border-purple-500/50 text-purple-300 bg-black/50 font-mono">
             <Trophy className="w-3 h-3 mr-1" />
-            SCORE_{score:04d}
+SCORE_{score.toString().padStart(4, '0')}
           </Badge>
         </div>
         
         <div className={`flex items-center gap-2 ${isUrgent ? 'text-red-400 animate-pulse' : 'text-green-300'}`}>
           <Clock className="w-4 h-4" />
           <span className="font-mono text-lg font-bold tracking-wider">
-            {timeLeft:02d}s
+{timeLeft.toString().padStart(2, '0')}s
           </span>
         </div>
       </div>
