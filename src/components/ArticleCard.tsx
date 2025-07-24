@@ -25,8 +25,8 @@ export const ArticleCard = ({ article, onSelect, isSelected, isRevealed, disable
   };
 
   const getBadgeText = () => {
-    if (!isRevealed) return "SELECT_TARGET";
-    return article.isReal ? "AUTHENTIC_SOURCE" : "SYNTHETIC_THREAT";
+    if (!isRevealed) return "Select Article";
+    return article.isReal ? "Authentic" : "AI Generated";
   };
 
   return (
@@ -43,31 +43,31 @@ export const ArticleCard = ({ article, onSelect, isSelected, isRevealed, disable
           disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
         }`}
       >
-        {/* Terminal-style header overlay */}
-        <div className="absolute top-0 left-0 right-0 bg-black/90 text-green-400 font-mono text-xs p-2 z-20 border-b border-green-500/30">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Shield className="w-3 h-3" />
-              <span>&gt; ANALYZING_SOURCE</span>
-            </div>
-            {isRevealed && (
+        {/* Status header overlay */}
+        {isRevealed && (
+          <div className="absolute top-0 left-0 right-0 bg-black/95 text-white text-sm p-3 z-20 border-b border-gray-600">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Shield className="w-4 h-4 text-gray-400" />
+                <span>Analysis Complete</span>
+              </div>
               <Badge 
                 variant="outline"
-                className={`font-mono text-xs border ${
+                className={`text-sm border ${
                   article.isReal 
-                    ? 'border-green-500 text-green-400 bg-black/50' 
-                    : 'border-red-500 text-red-400 bg-black/50'
+                    ? 'border-green-500 text-green-400 bg-green-500/10' 
+                    : 'border-red-500 text-red-400 bg-red-500/10'
                 }`}
               >
                 {getIcon()}
                 {getBadgeText()}
               </Badge>
-            )}
+            </div>
           </div>
-        </div>
+        )}
         
         {/* Wikipedia page recreation */}
-        <div className="bg-white text-black min-h-[600px] font-sans mt-8">
+        <div className="bg-white text-black min-h-[600px] font-sans mt-0">
           {/* Wikipedia header bar */}
           <div className="bg-gray-100 border-b border-gray-300 px-4 py-2 flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -162,7 +162,7 @@ export const ArticleCard = ({ article, onSelect, isSelected, isRevealed, disable
           <div className="absolute bottom-4 right-4">
             <Badge
               variant="outline"
-              className="bg-black/80 border-green-500/50 text-green-400 font-mono text-xs animate-pulse"
+              className="bg-gray-900/90 border-gray-600 text-gray-300 text-sm hover:border-green-400 hover:text-green-400 transition-colors"
             >
               <Zap className="w-3 h-3 mr-1" />
               {getBadgeText()}

@@ -31,10 +31,10 @@ export const GameSettings = ({ onStartGame, isLoading }: GameSettingsProps) => {
   };
 
   return (
-    <Card className="max-w-md mx-auto p-6 bg-card/70 backdrop-blur-md shadow-card">
+    <Card className="max-w-md mx-auto p-6 bg-gray-900/50 border border-gray-700 backdrop-blur-md">
       <div className="flex items-center gap-2 mb-6">
-        <Settings className="w-5 h-5 text-wiki-blue" />
-        <h2 className="text-xl font-bold">Game Settings</h2>
+        <Settings className="w-5 h-5 text-green-400" />
+        <h2 className="text-xl font-bold text-white">Game Settings</h2>
       </div>
       
       <div className="space-y-4">
@@ -110,13 +110,12 @@ export const GameSettings = ({ onStartGame, isLoading }: GameSettingsProps) => {
         </div>
 
         <Button 
-          variant="wiki" 
           size="lg" 
           onClick={handleStart} 
           disabled={isLoading}
-          className="w-full mt-6"
+          className="w-full mt-6 bg-green-600 hover:bg-green-700 text-white"
         >
-          <Play className="w-4 h-4" />
+          <Play className="w-4 h-4 mr-2" />
           {isLoading ? "Loading..." : "Start Game"}
         </Button>
       </div>
