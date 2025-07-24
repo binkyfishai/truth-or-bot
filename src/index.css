@@ -8,33 +8,33 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 0 0% 100%;
+    --foreground: 220 7% 17%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 7% 17%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 7% 17%;
 
-    --primary: 213 94% 68%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 203 89% 53%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 210 20% 97%;
+    --secondary-foreground: 220 7% 17%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 210 20% 92%;
+    --muted-foreground: 220 7% 40%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 210 20% 92%;
+    --accent-foreground: 220 7% 17%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 203 89% 53%;
 
     /* Game-specific colors */
     --wiki-blue: 213 94% 68%;
@@ -44,13 +44,13 @@ All colors MUST be HSL.
     --timer: 25 95% 53%;
     
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(213 94% 68%), hsl(213 94% 78%));
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(213 27% 98%));
-    --gradient-hover: linear-gradient(135deg, hsl(213 94% 78%), hsl(213 94% 88%));
+    --gradient-primary: linear-gradient(135deg, hsl(203 89% 53%), hsl(203 89% 63%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(210 20% 97%));
+    --gradient-hover: linear-gradient(135deg, hsl(203 89% 63%), hsl(203 89% 73%));
     
     /* Shadows */
-    --shadow-card: 0 4px 12px -2px hsl(213 27% 8% / 0.1);
-    --shadow-button: 0 2px 8px -2px hsl(213 94% 68% / 0.3);
+    --shadow-card: 0 4px 12px -2px hsl(220 13% 91% / 0.4);
+    --shadow-button: 0 2px 8px -2px hsl(203 89% 53% / 0.3);
     --shadow-winner: 0 8px 32px -8px hsl(142 76% 36% / 0.4);
     
     /* Animations */
