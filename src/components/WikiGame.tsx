@@ -174,50 +174,61 @@ export const WikiGame = () => {
     const accuracy = Math.round((gameStats.correctAnswers / config!.rounds) * 100);
     
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="max-w-md mx-auto p-8 bg-gradient-card shadow-winner text-center">
-          <Trophy className="w-16 h-16 mx-auto mb-4 text-wiki-blue" />
-          <h2 className="text-2xl font-bold mb-6">Game Complete!</h2>
+      <div className="min-h-screen bg-black flex items-center justify-center p-4 font-mono">
+        <Card className="max-w-lg mx-auto p-8 bg-black/90 border-2 border-green-500/50 text-center">
+          <div className="text-green-400 text-sm mb-4">[MISSION_COMPLETE]</div>
+          <Trophy className="w-16 h-16 mx-auto mb-4 text-green-400" />
+          <h2 className="text-2xl font-bold mb-6 text-green-300 uppercase tracking-wide">ASSESSMENT_RESULTS</h2>
           
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-wiki-blue">{gameStats.score}</div>
-                <div className="text-sm text-muted-foreground">Total Score</div>
+              <div className="bg-black/60 border border-green-500/30 p-4">
+                <div className="text-2xl font-bold text-green-400">{gameStats.score:04d}</div>
+                <div className="text-xs text-green-200 uppercase tracking-wide">TOTAL_SCORE</div>
               </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-correct">{accuracy}%</div>
-                <div className="text-sm text-muted-foreground">Accuracy</div>
+              <div className="bg-black/60 border border-green-500/30 p-4">
+                <div className="text-2xl font-bold text-green-400">{accuracy}%</div>
+                <div className="text-xs text-green-200 uppercase tracking-wide">ACCURACY_RATE</div>
               </div>
             </div>
             
             <div className="grid grid-cols-2 gap-4">
-              <div className="text-center">
-                <div className="text-lg font-semibold">{gameStats.correctAnswers}/{config!.rounds}</div>
-                <div className="text-sm text-muted-foreground">Correct</div>
+              <div className="bg-black/60 border border-purple-500/30 p-4">
+                <div className="text-lg font-semibold text-purple-400">{gameStats.correctAnswers:02d}/{config!.rounds:02d}</div>
+                <div className="text-xs text-purple-200 uppercase tracking-wide">THREATS_DETECTED</div>
               </div>
-              <div className="text-center">
-                <div className="text-lg font-semibold">{Math.round(gameStats.averageTime)}s</div>
-                <div className="text-sm text-muted-foreground">Avg Time</div>
+              <div className="bg-black/60 border border-cyan-500/30 p-4">
+                <div className="text-lg font-semibold text-cyan-400">{Math.round(gameStats.averageTime):02d}s</div>
+                <div className="text-xs text-cyan-200 uppercase tracking-wide">AVG_RESPONSE_TIME</div>
               </div>
             </div>
             
-            <Badge variant="secondary" className="w-full">
-              {accuracy >= 80 ? "🏆 Wikipedia Expert!" : 
-               accuracy >= 60 ? "📚 Pretty Good!" : 
-               accuracy >= 40 ? "🤔 Keep Practicing!" : 
-               "🤖 AI Got You!"}
+            <Badge variant="outline" className={`w-full p-3 font-mono text-sm border-2 ${
+              accuracy >= 80 ? 'border-green-500 text-green-400 bg-green-500/10' : 
+              accuracy >= 60 ? 'border-yellow-500 text-yellow-400 bg-yellow-500/10' : 
+              accuracy >= 40 ? 'border-orange-500 text-orange-400 bg-orange-500/10' : 
+              'border-red-500 text-red-400 bg-red-500/10'
+            }`}>
+              {accuracy >= 80 ? ">> COGNITIVE_SECURITY_EXPERT <<" : 
+               accuracy >= 60 ? ">> ADEQUATE_THREAT_DETECTION <<" : 
+               accuracy >= 40 ? ">> REQUIRES_ADDITIONAL_TRAINING <<" : 
+               ">> CRITICAL_VULNERABILITY_DETECTED <<"}
             </Badge>
           </div>
           
-          <div className="flex gap-2 mt-6">
-            <Button variant="wiki" onClick={resetGame} className="flex-1">
-              <RotateCcw className="w-4 h-4" />
-              Play Again
+          <div className="flex gap-3 mt-8">
+            <Button 
+              onClick={resetGame} 
+              className="flex-1 bg-black border-2 border-green-400 text-green-400 hover:bg-green-400 hover:text-black font-mono uppercase"
+            >
+              <RotateCcw className="w-4 h-4 mr-2" />
+              REINITIALIZE
             </Button>
-            <Button variant="outline" onClick={resetGame}>
+            <Button 
+              onClick={resetGame}
+              className="bg-black border-2 border-red-400 text-red-400 hover:bg-red-400 hover:text-black font-mono uppercase px-6"
+            >
               <Home className="w-4 h-4" />
-              Home
             </Button>
           </div>
         </Card>
@@ -227,17 +238,20 @@ export const WikiGame = () => {
 
   if (!articles || !config) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin w-8 h-8 border-4 border-wiki-blue border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading articles...</p>
+      <div className="min-h-screen bg-black flex items-center justify-center font-mono">
+        <div className="text-center space-y-4">
+          <div className="animate-spin w-8 h-8 border-4 border-green-400 border-t-transparent rounded-full mx-auto"></div>
+          <div className="text-green-400 text-sm">
+            <div>&gt; INITIALIZING_COGNITIVE_SECURITY_PROTOCOL</div>
+            <div className="mt-2 text-green-300 animate-pulse">&gt; LOADING_DATA_SOURCES...</div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background p-4">
+    <div className="min-h-screen bg-black p-4 font-mono">
       <div className="max-w-7xl mx-auto space-y-6">
         <GameHeader
           timeLeft={timeLeft}
