@@ -8,33 +8,33 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 216 100% 98%;
-    --foreground: 213 27% 8%;
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 213 27% 8%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 213 27% 8%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
 
     --primary: 213 94% 68%;
-    --primary-foreground: 213 27% 8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
 
-    --secondary: 213 27% 84%;
-    --secondary-foreground: 213 27% 8%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 213 27% 96%;
-    --muted-foreground: 213 19% 46%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 213 100% 85%;
-    --accent-foreground: 213 27% 8%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 213 27% 88%;
-    --input: 213 27% 88%;
-    --ring: 213 94% 68%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
 
     /* Game-specific colors */
     --wiki-blue: 213 94% 68%;
