@@ -31,7 +31,7 @@ export const GameSettings = ({ onStartGame, isLoading }: GameSettingsProps) => {
   };
 
   return (
-    <Card className="max-w-md mx-auto p-6 bg-gradient-card shadow-card">
+    <Card className="max-w-md mx-auto p-6 bg-card/70 backdrop-blur-md shadow-card">
       <div className="flex items-center gap-2 mb-6">
         <Settings className="w-5 h-5 text-wiki-blue" />
         <h2 className="text-xl font-bold">Game Settings</h2>

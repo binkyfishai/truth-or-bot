@@ -5,6 +5,13 @@ export interface AIServiceConfig {
   difficulty: string;
 }
 
+interface FakeElements {
+  dates: string[]
+  numbers: string[]
+  locations: string[]
+  people: string[]
+}
+
 export class AIService {
   private static readonly OPENAI_MODELS = [
     "gpt-4.1-2025-04-14",
@@ -84,7 +91,7 @@ export class AIService {
     return fakeParagraphs.join('\n\n');
   }
 
-  private static getFakeElements(difficulty: string) {
+  private static getFakeElements(difficulty: string): FakeElements {
     const elements = {
       easy: {
         dates: ["3050", "1800", "2025"],
@@ -109,7 +116,10 @@ export class AIService {
     return elements[difficulty as keyof typeof elements] || elements.medium;
   }
 
-  private static modifyFirstParagraph(paragraph: string, fakeElements: any): string {
+  private static modifyFirstParagraph(
+    paragraph: string,
+    fakeElements: FakeElements
+  ): string {
     // Introduce subtle changes to make it seem different but plausible
     let modified = paragraph;
     
@@ -126,7 +136,7 @@ export class AIService {
     return modified;
   }
 
-  private static generateFakeParagraph(fakeElements: any): string {
+  private static generateFakeParagraph(fakeElements: FakeElements): string {
     const templates = [
       `Research conducted by ${fakeElements.people[0]} in ${fakeElements.dates[0]} revealed that ${fakeElements.numbers[0]} cases were documented in ${fakeElements.locations[0]}.`,
       `According to studies from ${fakeElements.locations[1]}, the phenomenon has been observed ${fakeElements.numbers[1]} times since ${fakeElements.dates[1]}.`,
