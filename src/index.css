@@ -1,0 +1,290 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Enhanced Dark Theme Design System */
+
+@layer base {
+  :root {
+    /* Force dark theme colors */
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 220 13% 8%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 220 13% 8%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 217.2 91.2% 59.8%;
+
+    /* Enhanced game-specific colors for dark theme */
+    --wiki-blue: 217.2 91.2% 59.8%;
+    --wiki-blue-dark: 217.2 91.2% 49.8%;
+    --correct: 142 76% 46%;
+    --incorrect: 0 84% 60%;
+    --timer: 25 95% 53%;
+    
+    /* Enhanced gradients for dark theme */
+    --gradient-primary: linear-gradient(135deg, hsl(217.2 91.2% 59.8%), hsl(262.1 83.3% 57.8%));
+    --gradient-card: linear-gradient(145deg, hsl(220 13% 8%), hsl(217.2 32.6% 12%));
+    --gradient-hover: linear-gradient(135deg, hsl(217.2 91.2% 69.8%), hsl(262.1 83.3% 67.8%));
+    --gradient-background: linear-gradient(135deg, hsl(222.2 84% 4.9%), hsl(224 71.4% 4.1%));
+    
+    /* Enhanced shadows for dark theme */
+    --shadow-card: 0 8px 32px -8px hsl(222.2 84% 2% / 0.6);
+    --shadow-button: 0 4px 16px -4px hsl(217.2 91.2% 59.8% / 0.4);
+    --shadow-winner: 0 12px 48px -12px hsl(142 76% 46% / 0.5);
+    --shadow-glow: 0 0 32px hsl(217.2 91.2% 59.8% / 0.3);
+    
+    /* Enhanced animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-elastic: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    --radius: 0.75rem;
+
+    /* Sidebar colors for dark theme */
+    --sidebar-background: 220 13% 6%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 217.2 91.2% 59.8%;
+    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
+    --sidebar-accent: 217.2 32.6% 15%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217.2 32.6% 15%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  /* Remove light theme - force dark everywhere */
+  * {
+    @apply border-border;
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    background: linear-gradient(135deg, hsl(222.2 84% 4.9%), hsl(224 71.4% 4.1%));
+    min-height: 100vh;
+  }
+
+  /* Custom scrollbar for dark theme */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(217.2 32.6% 12%);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(217.2 32.6% 25%);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(217.2 91.2% 59.8%);
+  }
+}
+
+/* Custom animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px hsl(217.2 91.2% 59.8% / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px hsl(217.2 91.2% 59.8% / 0.6);
+  }
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+}
+
+/* Custom utility classes */
+@layer utilities {
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  .animate-slide-in-left {
+    animation: slideInFromLeft 0.6s ease-out;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInFromRight 0.6s ease-out;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent;
+  }
+
+  .bg-glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .bg-glass-dark {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .shadow-neon {
+    box-shadow: 0 0 20px hsl(217.2 91.2% 59.8% / 0.5);
+  }
+
+  .shadow-neon-green {
+    box-shadow: 0 0 20px hsl(142 76% 46% / 0.5);
+  }
+
+  .shadow-neon-purple {
+    box-shadow: 0 0 20px hsl(262.1 83.3% 57.8% / 0.5);
+  }
+}
+
+/* Enhanced button styles for dark theme */
+.btn-primary {
+  @apply bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 transform hover:scale-105 shadow-neon;
+}
+
+.btn-secondary {
+  @apply bg-glass-dark hover:bg-gray-800/60 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 border border-gray-600 hover:border-gray-500;
+}
+
+/* Enhanced card styles for dark theme */
+.card-dark {
+  @apply bg-gray-800/50 border-gray-700 rounded-xl p-6 backdrop-blur-sm;
+}
+
+.card-hover {
+  @apply transition-all duration-300 hover:scale-105 hover:shadow-xl;
+}
+
+/* Game-specific enhancements */
+.wiki-article {
+  @apply bg-gray-900/80 border border-gray-700 rounded-lg p-4 backdrop-blur-sm;
+}
+
+.progress-urgent {
+  @apply animate-pulse;
+}
+
+.progress-urgent .bg-primary {
+  @apply bg-red-500;
+}
+
+/* Typography enhancements for dark theme */
+h1, h2, h3, h4, h5, h6 {
+  @apply text-white;
+}
+
+.text-muted {
+  @apply text-gray-400;
+}
+
+.text-accent {
+  @apply text-blue-400;
+}
+
+/* Interactive elements */
+.interactive-hover {
+  @apply transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer;
+}
+
+/* Loading states */
+.loading-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
