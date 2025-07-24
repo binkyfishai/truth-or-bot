@@ -55,9 +55,16 @@ export const ArticleCard = ({ article, onSelect, isSelected, isRevealed, disable
         <div className="bg-white text-black min-h-[600px] font-sans">
           {/* Wikipedia header bar */}
           <div className="bg-gray-100 border-b border-gray-300 px-4 py-2 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Menu className="w-4 h-4 text-gray-600" />
-              <div className="font-bold text-sm">Wikipedia</div>
+            <div className="flex items-center gap-2">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/6/63/Wikipedia-logo.png"
+                alt="Wikipedia logo"
+                className="w-6 h-6"
+              />
+              <div>
+                <div className="font-serif text-lg leading-none">Wikipedia</div>
+                <div className="text-[10px] -mt-1 text-gray-600">The Free Encyclopedia</div>
+              </div>
             </div>
             <div className="flex items-center gap-4">
               <Search className="w-4 h-4 text-gray-600" />
@@ -90,7 +97,7 @@ export const ArticleCard = ({ article, onSelect, isSelected, isRevealed, disable
               </div>
               
               {/* Article content */}
-              <div className="space-y-4 text-black leading-relaxed">
+              <div className="space-y-4 text-black leading-relaxed font-serif">
                 {article.content.split('\n').slice(0, 8).map((paragraph, index) => (
                   paragraph.trim() && (
                     <p key={index} className="text-sm text-justify">
@@ -124,14 +131,17 @@ export const ArticleCard = ({ article, onSelect, isSelected, isRevealed, disable
             </div>
           </div>
           
-          {/* Wikipedia footer */}
-          <div className="border-t border-gray-300 bg-gray-50 p-4 text-xs text-gray-600">
-            <div className="flex justify-between">
-              <span>This page was last edited on {article.lastModified || 'recently'}</span>
-              <span>Text is available under the Creative Commons Attribution-ShareAlike License</span>
-            </div>
+        {/* Wikipedia footer */}
+        <div className="border-t border-gray-300 bg-gray-50 p-4 text-xs text-gray-600">
+          <div className="flex justify-between">
+            <span>This page was last edited on {article.lastModified || 'recently'}</span>
+            <span>Text is available under the Creative Commons Attribution-ShareAlike License</span>
           </div>
         </div>
+        <div className="p-2 text-center text-gray-500 text-xs">
+          Content from Wikipedia is licensed under CC BY-SA 4.0. This project is not affiliated with Wikipedia or the Wikimedia Foundation.
+        </div>
+      </div>
         
         {!isRevealed && (
           <div className="absolute bottom-4 right-4">
