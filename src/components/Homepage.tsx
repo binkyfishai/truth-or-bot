@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { WikiGame } from "@/components/WikiGame";
+import { Navigation } from "@/components/Navigation";
 import { 
   Brain, 
   Globe, 
@@ -23,12 +24,23 @@ import {
 const Homepage = () => {
   const [showGame, setShowGame] = useState(false);
 
+  const handleBackToHome = () => {
+    setShowGame(false);
+  };
+
   if (showGame) {
-    return <WikiGame />;
+    return (
+      <>
+        <Navigation onHomeClick={handleBackToHome} currentPage="game" />
+        <WikiGame />
+      </>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+    <>
+      <Navigation onHomeClick={() => setShowGame(false)} currentPage="home" />
+      <div className="min-h-screen bg-black text-white relative overflow-hidden">
       {/* Matrix-style animated background */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-green-500/5 rounded-full blur-3xl animate-pulse"></div>
@@ -39,7 +51,7 @@ const Homepage = () => {
       </div>
 
       {/* Hero Section */}
-      <div className="relative z-10 container mx-auto px-4 py-16">
+      <div className="relative z-10 container mx-auto px-4 py-16 pt-24">
         <div className="text-center space-y-8 mb-16">
           {/* Logo/Title */}
           <div className="text-center mb-8">
@@ -248,6 +260,7 @@ const Homepage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

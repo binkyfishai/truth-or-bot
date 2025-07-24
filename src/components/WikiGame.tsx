@@ -153,7 +153,7 @@ export const WikiGame = () => {
 
   if (gameState === "settings") {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4 pt-20">
         <div className="text-center space-y-8">
           <div className="space-y-4">
             <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
@@ -174,7 +174,7 @@ export const WikiGame = () => {
     const accuracy = Math.round((gameStats.correctAnswers / config!.rounds) * 100);
     
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-4">
+      <div className="min-h-screen bg-black flex items-center justify-center p-4 pt-20">
         <Card className="max-w-lg mx-auto p-8 bg-gray-900/50 border border-gray-700 text-center rounded-lg">
           <Trophy className="w-16 h-16 mx-auto mb-6 text-green-400" />
           <h2 className="text-3xl font-bold mb-8 text-white">Training Complete</h2>
@@ -237,7 +237,7 @@ export const WikiGame = () => {
 
   if (!articles || !config) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center pt-20">
         <div className="text-center space-y-4">
           <div className="animate-spin w-8 h-8 border-4 border-green-400 border-t-transparent rounded-full mx-auto"></div>
           <div className="text-white">
@@ -250,7 +250,7 @@ export const WikiGame = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black p-4">
+    <div className="min-h-screen bg-black p-4 pt-20">
       <div className="max-w-7xl mx-auto space-y-6">
         <GameHeader
           timeLeft={timeLeft}
