@@ -32,7 +32,7 @@ export class WikipediaService {
 
       // Then get the page content
       const contentResponse = await fetch(
-        `${this.API_URL}?action=query&prop=extracts|info&exintro=true&explaintext=true&exsectionformat=plain&titles=${encodeURIComponent(pageTitle)}&format=json&origin=*&inprop=lastmodified`
+        `${this.API_URL}?action=query&prop=extracts|info&explaintext=true&exsectionformat=plain&redirects=1&titles=${encodeURIComponent(pageTitle)}&format=json&origin=*&inprop=lastmodified`
       );
 
       if (!contentResponse.ok) {
@@ -50,7 +50,7 @@ export class WikipediaService {
       }
 
       // Clean up the extract to remove unwanted patterns
-      let cleanContent = page.extract
+      const cleanContent = page.extract
         .replace(/\n\n+/g, '\n\n')
         .replace(/^[^a-zA-Z]*/, '')
         .trim();
@@ -96,7 +96,7 @@ export class WikipediaService {
   static async searchArticle(query: string): Promise<Article | null> {
     try {
       const response = await fetch(
-        `${this.API_URL}?action=query&prop=extracts|info&exintro=true&explaintext=true&titles=${encodeURIComponent(query)}&format=json&origin=*&inprop=lastmodified`
+        `${this.API_URL}?action=query&prop=extracts|info&explaintext=true&exsectionformat=plain&redirects=1&titles=${encodeURIComponent(query)}&format=json&origin=*&inprop=lastmodified`
       );
 
       if (!response.ok) {
