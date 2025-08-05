@@ -72,7 +72,7 @@ export const WikiGame = () => {
     await loadNewRound(config);
   };
 
-  // Function to load a new round of the game
+  // Load a new round of the game
   const loadNewRound = async (gameConfig: GameConfig) => {
     setIsLoading(true);
     setGameState("playing");
@@ -84,11 +84,15 @@ export const WikiGame = () => {
       // Add a timestamp to prevent caching
       const timestamp = new Date().getTime();
       
+      // Debugging: Log which API endpoint we're using
+      const apiUrl = `/api/content?t=${timestamp}`;
+      console.log(`ENDPOINT DEBUG: Using API endpoint ${apiUrl}`);
+      
       console.log(`Loading new round - Round ${currentRound}, Difficulty: ${gameConfig.difficulty}, Model: ${gameConfig.aiModel}, Timestamp: ${timestamp}`);
       
       // Use relative URL that works in any environment (localhost or web deployment)
       // Also renamed from 'game' to 'content' to avoid ad blockers
-      const response = await fetch(`/api/content?t=${timestamp}`, {
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
