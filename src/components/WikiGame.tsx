@@ -86,8 +86,9 @@ export const WikiGame = () => {
       
       console.log(`Loading new round - Round ${currentRound}, Difficulty: ${gameConfig.difficulty}, Model: ${gameConfig.aiModel}, Timestamp: ${timestamp}`);
       
-      // Use the API route to get game content
-      const response = await fetch(`http://localhost:3001/api/game?t=${timestamp}`, {
+      // Use relative URL that works in any environment (localhost or web deployment)
+      // Also renamed from 'game' to 'content' to avoid ad blockers
+      const response = await fetch(`/api/content?t=${timestamp}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -119,6 +120,13 @@ export const WikiGame = () => {
       
       console.log(`Received articles - Real: "${data.articles[data.realArticleIndex].title}", Fake: "${data.articles[1-data.realArticleIndex].title}"`);
       console.log(`Full data from server:`, JSON.stringify(data, null, 2));
+      
+      // Ensure both articles have the exact same title
+      const sharedTitle = data.articles[data.realArticleIndex].title;
+      data.articles.forEach(article => {
+        article.title = sharedTitle;
+      });
+      
       console.log(`Real article index from server: ${data.realArticleIndex}`);
       console.log(`Articles array length: ${data.articles.length}`);
       console.log(`Article 0 title: "${data.articles[0].title}", isAI: ${data.articles[0].isAI}`);

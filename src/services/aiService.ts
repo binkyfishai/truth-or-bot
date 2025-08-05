@@ -79,6 +79,12 @@ IMPORTANT: Your response MUST match the exact format and style of a Wikipedia ar
 5. Maintaining the same paragraph structure and overall layout as the original
 6. Including the same type of details (dates, names, statistics) but with subtle alterations
 
+EXTREMELY IMPORTANT:
+- DO NOT CHANGE THE TITLE of the article at all
+- DO NOT ADD PREFIXES like "Modern" or "In Pop Culture" to the title
+- DO NOT MODIFY THE TITLE in any way
+- Keep the title EXACTLY as "${realArticle.title}" with no additions or changes
+
 The fake article should be visually indistinguishable from the real one.`;
     
     switch (difficulty) {

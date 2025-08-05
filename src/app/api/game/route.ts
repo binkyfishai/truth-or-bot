@@ -22,6 +22,10 @@ export async function POST(req: NextRequest) {
       difficulty
     });
 
+    // Force the fake article title to be exactly the same as the real one
+    // This ensures no prefixes like "Modern" are added
+    fakeArticle.title = realArticle.title;
+    
     // Randomly decide which article to present first
     const isRealFirst = Math.random() > 0.5;
     const articles = isRealFirst ? [realArticle, fakeArticle] : [fakeArticle, realArticle];
