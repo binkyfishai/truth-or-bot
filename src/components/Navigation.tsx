@@ -3,20 +3,17 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { 
-  Shield, 
-  Eye, 
   Menu, 
   Home, 
   Brain, 
   Trophy, 
-  Info, 
-  Github,
-  X
+  Info,
+  Zap
 } from "lucide-react";
 
 interface NavigationProps {
   onHomeClick?: () => void;
-  currentPage?: "home" | "game" | "about";
+  currentPage?: "home" | "game" | "about" | "leaderboard" | "groq";
 }
 
 export const Navigation = ({ onHomeClick, currentPage = "home" }: NavigationProps) => {
@@ -26,12 +23,20 @@ export const Navigation = ({ onHomeClick, currentPage = "home" }: NavigationProp
     { id: "home", label: "Home", icon: Home, href: "#" },
     { id: "about", label: "About", icon: Info, href: "#about" },
     { id: "leaderboard", label: "Leaderboard", icon: Trophy, href: "#leaderboard" },
-    { id: "github", label: "GitHub", icon: Github, href: "https://github.com/binkyfishai/truth-or-bot", external: true }
+    { id: "groq", label: "Groq API", icon: Zap, href: "/groq", external: true }
   ];
 
   const handleNavClick = (item: typeof navItems[0]) => {
+    if (item.external) {
+      window.location.href = item.href;
+      return;
+    }
+    
     if (item.id === "home" && onHomeClick) {
       onHomeClick();
+    } else if (item.id === "leaderboard") {
+      // This will be handled by the Homepage component
+      window.location.hash = "leaderboard";
     }
     setIsOpen(false);
   };
@@ -42,21 +47,14 @@ export const Navigation = ({ onHomeClick, currentPage = "home" }: NavigationProp
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div 
-            className="flex items-center space-x-3 cursor-pointer group"
+            className="flex items-center cursor-pointer group"
             onClick={() => handleNavClick({ id: "home", label: "Home", icon: Home, href: "#" })}
           >
-            <div className="relative">
-              <Shield className="w-8 h-8 text-green-400 group-hover:text-green-300 transition-colors" />
-              <Eye className="w-3 h-3 text-red-400 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 group-hover:text-red-300 transition-colors" />
-            </div>
-            <div className="flex items-center space-x-2">
-              <span className="text-lg font-bold text-green-400 group-hover:text-green-300 transition-colors">
-                COGSEC
-              </span>
-              <span className="text-lg font-bold text-white group-hover:text-gray-200 transition-colors">
-                ARENA
-              </span>
-            </div>
+            <img 
+              src="/images/cogsec_arena_nobg.png" 
+              alt="Cogsec Arena" 
+              className="h-20 md:h-24 transition-all duration-300 group-hover:opacity-90" 
+            />
           </div>
 
           {/* Desktop Navigation */}
@@ -70,19 +68,11 @@ export const Navigation = ({ onHomeClick, currentPage = "home" }: NavigationProp
                   currentPage === item.id ? "text-green-400 bg-green-400/10" : ""
                 }`}
                 onClick={() => handleNavClick(item)}
-                asChild={item.external}
               >
-                {item.external ? (
-                  <a href={item.href} target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2">
-                    <item.icon className="w-4 h-4" />
-                    <span>{item.label}</span>
-                  </a>
-                ) : (
-                  <div className="flex items-center space-x-2">
-                    <item.icon className="w-4 h-4" />
-                    <span>{item.label}</span>
-                  </div>
-                )}
+                <div className="flex items-center space-x-2">
+                  <item.icon className="w-4 h-4" />
+                  <span>{item.label}</span>
+                </div>
               </Button>
             ))}
             
@@ -103,16 +93,11 @@ export const Navigation = ({ onHomeClick, currentPage = "home" }: NavigationProp
               </SheetTrigger>
               <SheetContent side="right" className="w-80 bg-black border-gray-800">
                 <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center space-x-3">
-                    <div className="relative">
-                      <Shield className="w-6 h-6 text-green-400" />
-                      <Eye className="w-2.5 h-2.5 text-red-400 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-base font-bold text-green-400">COGSEC</span>
-                      <span className="text-base font-bold text-white">ARENA</span>
-                    </div>
-                  </div>
+                  <img 
+                    src="/images/cogsec_arena_nobg.png" 
+                    alt="Cogsec Arena" 
+                    className="h-20" 
+                  />
                 </div>
 
                 <div className="space-y-4">
@@ -125,19 +110,11 @@ export const Navigation = ({ onHomeClick, currentPage = "home" }: NavigationProp
                         currentPage === item.id ? "text-green-400 bg-green-400/10" : ""
                       }`}
                       onClick={() => handleNavClick(item)}
-                      asChild={item.external}
                     >
-                      {item.external ? (
-                        <a href={item.href} target="_blank" rel="noopener noreferrer" className="flex items-center space-x-3">
-                          <item.icon className="w-4 h-4" />
-                          <span>{item.label}</span>
-                        </a>
-                      ) : (
-                        <div className="flex items-center space-x-3">
-                          <item.icon className="w-4 h-4" />
-                          <span>{item.label}</span>
-                        </div>
-                      )}
+                      <div className="flex items-center space-x-3">
+                        <item.icon className="w-4 h-4" />
+                        <span>{item.label}</span>
+                      </div>
                     </Button>
                   ))}
                   

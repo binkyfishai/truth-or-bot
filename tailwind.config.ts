@@ -104,11 +104,23 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse-slow': {
+					'0%': {
+						filter: 'drop-shadow(0 0 30px rgba(0, 255, 0, 0.8))'
+					},
+					'50%': {
+						filter: 'drop-shadow(0 0 40px rgba(0, 255, 0, 1))'
+					},
+					'100%': {
+						filter: 'drop-shadow(0 0 30px rgba(0, 255, 0, 0.8))'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-slow': 'pulse-slow 3s ease-in-out infinite'
 			}
 		}
 	},

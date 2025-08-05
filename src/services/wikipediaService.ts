@@ -1,140 +1,197 @@
-import { Article } from "@/components/ArticleCard";
+import { Article } from "./aiService";
 
+// Define interface for Wikipedia API responses
 interface WikipediaPage {
   title: string;
-  extract: string;
-  lastmodified?: string;
+  excerpt?: string;
 }
 
-interface WikipediaResponse {
-  query: {
-    pages: Record<string, WikipediaPage>;
-  };
-}
+class WikipediaService {
+  private baseUrl = "https://en.wikipedia.org/api/rest_v1";
 
-export class WikipediaService {
-  private static readonly BASE_URL = "https://en.wikipedia.org/api/rest_v1";
-  private static readonly API_URL = "https://en.wikipedia.org/w/api.php";
-
-  static async getRandomArticle(): Promise<Article> {
+  /**
+   * Get a random Wikipedia article
+   */
+  async getRandomArticle(): Promise<Article> {
     try {
-      // First, get a random page title
-      const randomResponse = await fetch(
-        `${this.API_URL}?action=query&list=random&rnnamespace=0&rnlimit=1&format=json&origin=*`
+      // First, get a random article title
+      const randomUrl = `${this.baseUrl}/page/random/summary`;
+      const response = await fetch(randomUrl);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch random article: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      const title = data.title;
+      const extract = data.extract;
+      
+      // For longer content, fetch the full article
+      if (extract.length < 500) {
+        return this.getArticleByTitle(title);
+      }
+      
+      return {
+        title,
+        content: this.formatWikipediaContent(extract, title),
+        isAI: false
+      };
+    } catch (error) {
+      console.error("Error fetching random Wikipedia article:", error);
+      throw new Error(`Failed to fetch random article: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  /**
+   * Get a Wikipedia article by title
+   */
+  async getArticleByTitle(title: string): Promise<Article> {
+    try {
+      // Encode the title for URL
+      const encodedTitle = encodeURIComponent(title);
+      const articleUrl = `${this.baseUrl}/page/summary/${encodedTitle}`;
+      
+      const response = await fetch(articleUrl);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch article "${title}": ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // If the extract is too short, try to get more content
+      if (data.extract && data.extract.length < 500) {
+        const htmlUrl = `${this.baseUrl}/page/html/${encodedTitle}`;
+        const htmlResponse = await fetch(htmlUrl);
+        
+        if (htmlResponse.ok) {
+          const htmlContent = await htmlResponse.text();
+          // Simple parsing to get text content (in a real app, use a proper HTML parser)
+          const textContent = this.extractTextFromHtml(htmlContent);
+          
+          return {
+            title: data.title,
+            content: this.formatWikipediaContent(textContent.slice(0, 2000), data.title), // Limit content length
+            isAI: false
+          };
+        }
+      }
+      
+      return {
+        title: data.title,
+        content: this.formatWikipediaContent(data.extract || "No content available", data.title),
+        isAI: false
+      };
+    } catch (error) {
+      console.error(`Error fetching Wikipedia article "${title}":`, error);
+      throw new Error(`Failed to fetch article "${title}": ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  /**
+   * Format content to match Wikipedia style
+   */
+  private formatWikipediaContent(content: string, title: string): string {
+    // Make sure content starts with "From Wikipedia, the free encyclopedia"
+    if (!content.includes("From Wikipedia")) {
+      content = "From Wikipedia, the free encyclopedia\n\n" + content;
+    }
+    
+    // Add section headers if they don't exist
+    if (!content.includes("==")) {
+      const paragraphs = content.split("\n\n");
+      
+      // If we have multiple paragraphs, add sections
+      if (paragraphs.length > 2) {
+        // Add Introduction section
+        let newContent = paragraphs[0] + "\n\n";
+        
+        // Add Overview section with the remaining content
+        newContent += "== Overview ==\n\n";
+        newContent += paragraphs.slice(1).join("\n\n");
+        
+        content = newContent;
+      }
+    }
+    
+    // Add wiki links to important terms
+    // This is a simple heuristic - in a real app, use a more sophisticated approach
+    const terms = title.split(' ');
+    terms.forEach(term => {
+      if (term.length > 4) {
+        // Don't replace inside existing wiki links
+        const regex = new RegExp(`(?<!\\[\\[)\\b${term}\\b(?!\\]\\])`, 'gi');
+        content = content.replace(regex, `[[${term}]]`);
+      }
+    });
+    
+    // Add at least one citation if none exist
+    if (!content.includes("[1]")) {
+      content += "\n\n== References ==\n\n1. Wikipedia contributors. \"" + title + "\", Wikipedia, The Free Encyclopedia.";
+    }
+    
+    return content;
+  }
+
+  /**
+   * Search Wikipedia articles
+   */
+  async searchArticles(query: string): Promise<Article[]> {
+    try {
+      const searchUrl = `${this.baseUrl}/page/search/${encodeURIComponent(query)}`;
+      const response = await fetch(searchUrl);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to search articles: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Get the first few results
+      const articles = await Promise.all(
+        data.pages.slice(0, 3).map(async (page: WikipediaPage) => {
+          try {
+            return await this.getArticleByTitle(page.title);
+          } catch (error) {
+            console.error(`Error fetching article "${page.title}":`, error);
+            return {
+              title: page.title,
+              content: this.formatWikipediaContent(page.excerpt || "Failed to load content", page.title),
+              isAI: false
+            };
+          }
+        })
       );
       
-      if (!randomResponse.ok) {
-        throw new Error("Failed to fetch random page");
-      }
-
-      const randomData = await randomResponse.json();
-      const pageTitle = randomData.query.random[0].title;
-
-      // Then get the page content
-      const contentResponse = await fetch(
-        `${this.API_URL}?action=query&prop=extracts|info&explaintext=true&exsectionformat=plain&redirects=1&titles=${encodeURIComponent(pageTitle)}&format=json&origin=*&inprop=lastmodified`
-      );
-
-      if (!contentResponse.ok) {
-        throw new Error("Failed to fetch page content");
-      }
-
-      const contentData: WikipediaResponse = await contentResponse.json();
-      const pages = contentData.query.pages;
-      const pageId = Object.keys(pages)[0];
-      const page = pages[pageId];
-
-      if (!page || !page.extract) {
-        // Try again with a different page if this one is empty
-        return this.getRandomArticle();
-      }
-
-      // Clean up the extract to remove unwanted patterns
-      const cleanContent = page.extract
-        .replace(/\n\n+/g, '\n\n')
-        .replace(/^[^a-zA-Z]*/, '')
-        .trim();
-
-      // Ensure minimum content length
-      if (cleanContent.length < 200) {
-        return this.getRandomArticle();
-      }
-
-      // Format the last modified date
-      const lastModified = page.lastmodified 
-        ? new Date(page.lastmodified).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          })
-        : undefined;
-
-      return {
-        title: page.title,
-        content: cleanContent,
-        isReal: true,
-        source: "Wikipedia",
-        lastModified
-      };
+      return articles;
     } catch (error) {
-      console.error("Error fetching Wikipedia article:", error);
-      // Return a fallback article
-      return {
-        title: "Sample Article",
-        content: "This is a sample article that demonstrates the Wikipedia article format. It contains multiple paragraphs of information about various topics.\n\nThis is the second paragraph that continues the explanation with more detailed information about the subject matter.\n\nThe article continues with additional sections and paragraphs to provide comprehensive coverage of the topic.",
-        isReal: true,
-        source: "Wikipedia",
-        lastModified: new Date().toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        })
-      };
+      console.error("Error searching Wikipedia articles:", error);
+      throw new Error(`Failed to search articles: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
-  static async searchArticle(query: string): Promise<Article | null> {
-    try {
-      const response = await fetch(
-        `${this.API_URL}?action=query&prop=extracts|info&explaintext=true&exsectionformat=plain&redirects=1&titles=${encodeURIComponent(query)}&format=json&origin=*&inprop=lastmodified`
-      );
-
-      if (!response.ok) {
-        return null;
-      }
-
-      const data: WikipediaResponse = await response.json();
-      const pages = data.query.pages;
-      const pageId = Object.keys(pages)[0];
-      const page = pages[pageId];
-
-      if (!page || !page.extract || pageId === "-1") {
-        return null;
-      }
-
-      const cleanContent = page.extract
-        .replace(/\n\n+/g, '\n\n')
-        .replace(/^[^a-zA-Z]*/, '')
-        .trim();
-
-      const lastModified = page.lastmodified 
-        ? new Date(page.lastmodified).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          })
-        : undefined;
-
-      return {
-        title: page.title,
-        content: cleanContent,
-        isReal: true,
-        source: "Wikipedia",
-        lastModified
-      };
-    } catch (error) {
-      console.error("Error searching Wikipedia article:", error);
-      return null;
-    }
+  /**
+   * Simple HTML to text extraction (in a real app, use a proper HTML parser)
+   */
+  private extractTextFromHtml(html: string): string {
+    // Remove HTML tags
+    let text = html.replace(/<[^>]*>/g, ' ');
+    
+    // Replace multiple spaces with a single space
+    text = text.replace(/\s+/g, ' ');
+    
+    // Replace HTML entities
+    text = text.replace(/&nbsp;/g, ' ')
+               .replace(/&amp;/g, '&')
+               .replace(/&lt;/g, '<')
+               .replace(/&gt;/g, '>')
+               .replace(/&quot;/g, '"')
+               .replace(/&#39;/g, "'");
+    
+    return text.trim();
   }
 }
+
+// Export a singleton instance
+export const wikipediaService = new WikipediaService();
+export default wikipediaService;

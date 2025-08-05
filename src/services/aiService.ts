@@ -1,188 +1,171 @@
-import { Article } from "@/components/ArticleCard";
+import Groq from 'groq-sdk';
 
-export interface AIServiceConfig {
+// Define types for AI responses
+export interface AIResponse {
+  content: string;
   model: string;
-  difficulty: string;
+  tokenUsage?: {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  };
 }
 
-interface FakeElements {
-  dates: string[]
-  numbers: string[]
-  locations: string[]
-  people: string[]
+export interface Article {
+  title: string;
+  content: string;
+  isAI: boolean;
+  isCompleteFiction?: boolean;
 }
 
-export class AIService {
-  private static readonly OPENAI_MODELS = [
-    "gpt-4.1-2025-04-14",
-    "o4-mini-2025-04-16",
-    "gpt-4.1-mini-2025-04-14"
-  ];
+class AIService {
+  private groqClient: Groq;
+  
+  constructor() {
+    // Initialize the Groq client with API key
+    this.groqClient = new Groq({
+      apiKey: process.env.GROQ_API_KEY,
+      // Optional: Add custom configuration if needed
+      // dangerouslyAllowBrowser: process.env.NODE_ENV === 'development'
+    });
+  }
 
-  private static readonly CLAUDE_MODELS = [
-    "claude-sonnet-4-20250514",
-    "claude-opus-4-20250514",
-    "claude-3-5-haiku-20241022"
-  ];
-
-  static async generateFakeArticle(realArticle: Article, config: AIServiceConfig): Promise<Article> {
+  /**
+   * Generate a response using Groq API
+   */
+  async generateResponse(prompt: string, model: string = "llama-3.1-70b-versatile"): Promise<AIResponse> {
     try {
-      // For now, we'll create a convincing fake article locally
-      // In a real implementation, you'd call your chosen AI API here
-      const fakeTitle = this.generateVariantTitle(realArticle.title);
-      const fakeContent = await this.generateVariantContent(realArticle.content, config.difficulty);
+      const chatCompletion = await this.groqClient.chat.completions.create({
+        messages: [
+          { role: "system", content: "You are a helpful assistant that provides accurate and concise information." },
+          { role: "user", content: prompt }
+        ],
+        model: model,
+        temperature: 0.5,
+        max_tokens: 1000,
+      });
+
+      const responseContent = chatCompletion.choices[0].message.content || "No response generated";
       
       return {
-        title: fakeTitle,
-        content: fakeContent,
-        isReal: false,
-        source: "AI Generated",
-        lastModified: new Date().toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        })
+        content: responseContent,
+        model: model,
+        tokenUsage: {
+          promptTokens: chatCompletion.usage?.prompt_tokens || 0,
+          completionTokens: chatCompletion.usage?.completion_tokens || 0,
+          totalTokens: chatCompletion.usage?.total_tokens || 0
+        }
+      };
+    } catch (error) {
+      console.error("Error generating AI response:", error);
+      throw new Error(`Failed to generate AI response: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  /**
+   * Generate a fake article based on a real one
+   */
+  async generateFakeArticle(realArticle: Article, options: { model: string; difficulty: string }): Promise<Article> {
+    const { model, difficulty } = options;
+    
+    // Create a prompt based on difficulty
+    let prompt = `Based on this real Wikipedia article titled "${realArticle.title}", create a convincing but fake version. 
+    
+IMPORTANT: Your response MUST match the exact format and style of a Wikipedia article, including:
+1. Starting with "From Wikipedia, the free encyclopedia"
+2. Using Wikipedia-style section headers with == Section Title == format
+3. Including proper citations like [1], [2], etc.
+4. Using [[wiki links]] for important terms
+5. Maintaining the same paragraph structure and overall layout as the original
+6. Including the same type of details (dates, names, statistics) but with subtle alterations
+
+The fake article should be visually indistinguishable from the real one.`;
+    
+    switch (difficulty) {
+      case "easy":
+        prompt += " Include some obvious factual errors that would be easy to spot.";
+        break;
+      case "medium":
+        prompt += " Include subtle factual errors that require some knowledge to detect.";
+        break;
+      case "hard":
+        prompt += " Make it extremely convincing with very subtle inaccuracies that would be difficult for most people to detect.";
+        break;
+      default:
+        prompt += " Include some subtle factual errors.";
+    }
+    
+    prompt += `\n\nOriginal article content:\n${realArticle.content}\n\nGenerate a fake version with an identical structure but altered facts:`;
+    
+    try {
+      const response = await this.generateResponse(prompt, model);
+      
+      // Process the content to ensure it has proper Wikipedia formatting
+      let processedContent = response.content;
+      
+      // Make sure it starts with "From Wikipedia..."
+      if (!processedContent.includes("From Wikipedia")) {
+        processedContent = "From Wikipedia, the free encyclopedia\n\n" + processedContent;
+      }
+      
+      return {
+        title: realArticle.title,
+        content: processedContent,
+        isAI: true
       };
     } catch (error) {
       console.error("Error generating fake article:", error);
-      return this.createFallbackFakeArticle(realArticle);
+      throw new Error(`Failed to generate fake article: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
-  private static generateVariantTitle(originalTitle: string): string {
-    const variants = [
-      `${originalTitle} (disambiguation)`,
-      `${originalTitle} Theory`,
-      `History of ${originalTitle}`,
-      `${originalTitle} in Popular Culture`,
-      `Modern ${originalTitle}`,
-      `${originalTitle} Research`,
-      `The ${originalTitle} Phenomenon`,
-      `${originalTitle} Studies`
-    ];
-    
-    return variants[Math.floor(Math.random() * variants.length)];
-  }
+  /**
+   * Generate a response with structured JSON output
+   */
+  async generateStructuredResponse<T>(prompt: string, model: string = "llama-3.1-70b-versatile"): Promise<T> {
+    try {
+      const chatCompletion = await this.groqClient.chat.completions.create({
+        messages: [
+          { role: "system", content: "You are a helpful assistant that provides responses in valid JSON format." },
+          { role: "user", content: prompt }
+        ],
+        model: model,
+        temperature: 0.2,
+        response_format: { type: "json_object" },
+      });
 
-  private static async generateVariantContent(originalContent: string, difficulty: string): Promise<string> {
-    // In a real implementation, this would call your AI API
-    // For now, we'll create a convincing fake by modifying the original
-    
-    const paragraphs = originalContent.split('\n\n');
-    const fakeParagraphs: string[] = [];
-    
-    // Add some fake information based on difficulty
-    const fakeElements = this.getFakeElements(difficulty);
-    
-    for (let i = 0; i < paragraphs.length && i < 6; i++) {
-      let paragraph = paragraphs[i];
-      
-      if (i === 0) {
-        // Modify the first paragraph to be subtly different
-        paragraph = this.modifyFirstParagraph(paragraph, fakeElements);
-      } else if (i === 1 && Math.random() > 0.5) {
-        // Sometimes inject a fake paragraph
-        fakeParagraphs.push(this.generateFakeParagraph(fakeElements));
-      }
-      
-      fakeParagraphs.push(this.introduceSubtleChanges(paragraph, difficulty));
+      const responseContent = chatCompletion.choices[0].message.content || "{}";
+      return JSON.parse(responseContent) as T;
+    } catch (error) {
+      console.error("Error generating structured response:", error);
+      throw new Error(`Failed to generate structured response: ${error instanceof Error ? error.message : String(error)}`);
     }
-    
-    return fakeParagraphs.join('\n\n');
   }
 
-  private static getFakeElements(difficulty: string): FakeElements {
-    const elements = {
-      easy: {
-        dates: ["3050", "1800", "2025"],
-        numbers: ["999", "millions", "thousands"],
-        locations: ["Mars", "Atlantis", "fictional country"],
-        people: ["Dr. Smith", "Professor Johnson", "famous researcher"]
-      },
-      medium: {
-        dates: ["1995", "2001", "1987"],
-        numbers: ["approximately 50", "over 200", "nearly 100"],
-        locations: ["Northern Europe", "Southeast Asia", "Central America"],
-        people: ["renowned scientist", "leading expert", "distinguished professor"]
-      },
-      hard: {
-        dates: ["1962", "1974", "1989"],
-        numbers: ["precisely 47", "approximately 156", "over 300"],
-        locations: ["University of Cambridge", "Stanford Research Institute", "MIT"],
-        people: ["Dr. Margaret Wilson", "Professor David Chen", "Dr. Sarah Thompson"]
-      }
-    };
-    
-    return elements[difficulty as keyof typeof elements] || elements.medium;
-  }
+  /**
+   * Stream a response using Groq API
+   */
+  async streamResponse(prompt: string, model: string = "llama-3.1-70b-versatile") {
+    try {
+      const stream = await this.groqClient.chat.completions.create({
+        messages: [
+          { role: "system", content: "You are a helpful assistant that provides accurate and concise information." },
+          { role: "user", content: prompt }
+        ],
+        model: model,
+        temperature: 0.5,
+        max_tokens: 1000,
+        stream: true,
+      });
 
-  private static modifyFirstParagraph(
-    paragraph: string,
-    fakeElements: FakeElements
-  ): string {
-    // Introduce subtle changes to make it seem different but plausible
-    let modified = paragraph;
-    
-    // Sometimes change dates
-    if (Math.random() > 0.7) {
-      modified = modified.replace(/\b(19|20)\d{2}\b/, fakeElements.dates[0]);
+      return stream;
+    } catch (error) {
+      console.error("Error streaming AI response:", error);
+      throw new Error(`Failed to stream AI response: ${error instanceof Error ? error.message : String(error)}`);
     }
-    
-    // Sometimes change numbers
-    if (Math.random() > 0.6) {
-      modified = modified.replace(/\b\d+\b/, fakeElements.numbers[0]);
-    }
-    
-    return modified;
-  }
-
-  private static generateFakeParagraph(fakeElements: FakeElements): string {
-    const templates = [
-      `Research conducted by ${fakeElements.people[0]} in ${fakeElements.dates[0]} revealed that ${fakeElements.numbers[0]} cases were documented in ${fakeElements.locations[0]}.`,
-      `According to studies from ${fakeElements.locations[1]}, the phenomenon has been observed ${fakeElements.numbers[1]} times since ${fakeElements.dates[1]}.`,
-      `${fakeElements.people[1]} published groundbreaking research in ${fakeElements.dates[2]} that identified ${fakeElements.numbers[2]} distinct patterns.`
-    ];
-    
-    return templates[Math.floor(Math.random() * templates.length)];
-  }
-
-  private static introduceSubtleChanges(paragraph: string, difficulty: string): string {
-    if (difficulty === 'easy') return paragraph;
-    
-    // For medium and hard difficulty, make very subtle changes
-    let modified = paragraph;
-    
-    // Occasionally swap similar words
-    const synonyms = {
-      'important': 'significant',
-      'large': 'substantial',
-      'many': 'numerous',
-      'first': 'initial',
-      'last': 'final',
-      'developed': 'established',
-      'created': 'formed'
-    };
-    
-    Object.entries(synonyms).forEach(([original, replacement]) => {
-      if (Math.random() > 0.8) {
-        modified = modified.replace(new RegExp(`\\b${original}\\b`, 'gi'), replacement);
-      }
-    });
-    
-    return modified;
-  }
-
-  private static createFallbackFakeArticle(realArticle: Article): Article {
-    return {
-      title: `${realArticle.title} (Alternative Theory)`,
-      content: `This alternative perspective on ${realArticle.title} presents a different interpretation of the available evidence.\n\nRecent studies conducted by leading researchers have suggested that the conventional understanding may require revision.\n\nThe new framework proposes several key modifications to the existing model, based on data collected from multiple sources over the past decade.\n\nThese findings have significant implications for how we understand this topic and may lead to important developments in the field.`,
-      isReal: false,
-      source: "AI Generated",
-      lastModified: new Date().toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      })
-    };
   }
 }
+
+// Export a singleton instance
+export const aiService = new AIService();
+export default aiService;
